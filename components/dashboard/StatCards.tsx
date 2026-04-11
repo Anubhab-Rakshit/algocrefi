@@ -118,10 +118,30 @@ export default function StatCards({ pool, user, loan }: Props) {
   }, [pool.utilizationPct, user.auraPoints]);
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 0.9fr 0.9fr", gap: 14 }}>
 
       {/* Card 1 — Pool Balance */}
       <Card delay={0}>
+        {/* Background watermark */}
+        <div
+          aria-hidden
+          className="font-display"
+          style={{
+            position: "absolute",
+            bottom: -12,
+            right: -8,
+            fontSize: 96,
+            fontWeight: 800,
+            color: "transparent",
+            WebkitTextStroke: "1px rgba(0,255,209,0.06)",
+            pointerEvents: "none",
+            userSelect: "none",
+            lineHeight: 1,
+            letterSpacing: "-0.05em",
+          }}
+        >
+          54K
+        </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <span style={{ fontFamily: "monospace", fontSize: 9, color: "rgba(255,255,255,0.3)", letterSpacing: "0.12em" }}>
             POOL_BALANCE

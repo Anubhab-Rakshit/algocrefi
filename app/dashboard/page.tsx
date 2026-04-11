@@ -78,7 +78,22 @@ function DashboardInner() {
       >
         <TopBar title="Dashboard" />
         <StatCards pool={MOCK_POOL} user={MOCK_USER} loan={MOCK_LOAN} />
-        <PoolChart />
+
+        {/* Chart card — explicit height so PoolChart flex fills correctly */}
+        <div
+          style={{
+            background: "rgba(255,255,255,0.025)",
+            border: "1px solid rgba(255,255,255,0.07)",
+            borderRadius: 16,
+            overflow: "hidden",
+            marginTop: 14,
+            height: 480,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <PoolChart pair="ALGO_USDC" />
+        </div>
 
         {/* Row 3 */}
         <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 14, marginTop: 14 }}>
