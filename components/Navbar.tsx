@@ -9,7 +9,7 @@ const NAV_LINKS = [
   { label: "Analytics", href: "#analytics" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ onEnterApp }: { onEnterApp: () => void }) {
   const [visible, setVisible] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("Pool");
@@ -109,6 +109,7 @@ export default function Navbar() {
 
           {/* Launch App button */}
           <button
+            onClick={onEnterApp}
             style={{
               border: "1px solid #00FFD1",
               background: "transparent",
@@ -218,6 +219,7 @@ export default function Navbar() {
             </a>
           ))}
           <button
+            onClick={onEnterApp}
             style={{
               border: "1px solid #00FFD1",
               background: "transparent",

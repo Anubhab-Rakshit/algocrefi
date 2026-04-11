@@ -87,7 +87,7 @@ function TerminalBlock({ ready }: { ready: boolean }) {
   );
 }
 
-export default function HeroSection() {
+export default function HeroSection({ onEnterApp }: { onEnterApp: () => void }) {
   const [ready, setReady] = useState(false);
   const [statsActive, setStatsActive] = useState(false);
   const [showScroll, setShowScroll] = useState(true);
@@ -243,6 +243,7 @@ export default function HeroSection() {
         >
           <button
             ref={btn1Ref}
+            onClick={onEnterApp}
             {...magnetic(btn1Ref)}
             style={{
               background: "#00FFD1",

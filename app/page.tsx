@@ -11,9 +11,11 @@ import HowItWorks from "@/components/HowItWorks";
 import AuraSection from "@/components/AuraSection";
 import StatsTicker from "@/components/StatsTicker";
 import Footer from "@/components/Footer";
+import WalletConnectModal from "@/components/WalletConnectModal";
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false);
+  const [showWalletModal, setShowWalletModal] = useState(false);
   useScrollReveal();
 
   return (
@@ -27,6 +29,9 @@ export default function Home() {
       {/* Custom lerp cursor */}
       <Cursor />
 
+      {/* Wallet Connect Modal */}
+      <WalletConnectModal isOpen={showWalletModal} onClose={() => setShowWalletModal(false)} />
+
       {/* Page content — fades in after loader exits */}
       <div
         style={{
@@ -36,9 +41,9 @@ export default function Home() {
           transition: "opacity 0.5s ease",
         }}
       >
-        <Navbar />
+        <Navbar onEnterApp={() => setShowWalletModal(true)} />
         <main>
-          <HeroSection />
+          <HeroSection onEnterApp={() => setShowWalletModal(true)} />
           <BentoGrid />
           <HowItWorks />
           <AuraSection />
