@@ -1,56 +1,59 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const NAV = [
   {
     id: "dashboard",
-    label: "Dashboard",
+    label: "Overview",
+    tag: "01",
     icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
-        <rect x="11" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
-        <rect x="1" y="11" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
-        <rect x="11" y="11" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="8" y="1" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="1" y="8" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.2" />
+        <rect x="8" y="8" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.2" />
       </svg>
     ),
   },
   {
     id: "pool",
     label: "Pool",
+    tag: "02",
     icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <path d="M9 3C9 3 3 7 3 11a6 6 0 0012 0C15 7 9 3 9 3z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
-        <path d="M9 11a2 2 0 100 2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M7 2C7 2 2 5.5 2 8.5a5 5 0 0010 0C12 5.5 7 2 7 2z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
       </svg>
     ),
   },
   {
     id: "lending",
     label: "Lending",
+    tag: "03",
     icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <rect x="1" y="8" width="16" height="9" rx="2" stroke="currentColor" strokeWidth="1.4" />
-        <path d="M4 8V6a5 5 0 0110 0v2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-        <circle cx="9" cy="12.5" r="1.5" stroke="currentColor" strokeWidth="1.2" />
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <rect x="1" y="6" width="12" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M3.5 6V4.5a3.5 3.5 0 017 0V6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
       </svg>
     ),
   },
   {
     id: "aura",
     label: "Aura",
+    tag: "04",
     icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <polygon points="9,1 11.5,6.5 17,7.3 13,11.2 14.1,16.5 9,13.7 3.9,16.5 5,11.2 1,7.3 6.5,6.5" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" fill="none" />
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <polygon points="7,1 8.8,5 13,5.6 10,8.4 10.8,12.5 7,10.5 3.2,12.5 4,8.4 1,5.6 5.2,5" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinejoin="round" />
       </svg>
     ),
   },
   {
     id: "settings",
     label: "Settings",
+    tag: "05",
     icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <circle cx="9" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.4" />
-        <path d="M9 1v2M9 15v2M1 9h2M15 9h2M3.05 3.05l1.41 1.41M13.54 13.54l1.41 1.41M3.05 14.95l1.41-1.41M13.54 4.46l1.41-1.41" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <circle cx="7" cy="7" r="2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.6 2.6l1 1M10.4 10.4l1 1M2.6 11.4l1-1M10.4 3.6l1-1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -63,6 +66,14 @@ interface SidebarProps {
 
 export default function Sidebar({ active, onNav }: SidebarProps) {
   const [hovered, setHovered] = useState<string | null>(null);
+  const [txCount, setTxCount] = useState(2847);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const t = setInterval(() => setTxCount((p) => p + Math.floor(Math.random() * 3)), 4200);
+    return () => clearInterval(t);
+  }, []);
 
   return (
     <aside
@@ -72,61 +83,70 @@ export default function Sidebar({ active, onNav }: SidebarProps) {
         left: 0,
         width: 220,
         height: "100vh",
-        background: "rgba(8,8,18,0.85)",
-        backdropFilter: "blur(20px)",
-        borderRight: "1px solid rgba(255,255,255,0.05)",
+        background: "rgba(5,5,12,0.92)",
+        backdropFilter: "blur(24px)",
+        borderRight: "1px solid rgba(255,255,255,0.04)",
         display: "flex",
         flexDirection: "column",
         zIndex: 100,
+        overflow: "hidden",
       }}
     >
-      {/* Logo */}
-      <div style={{ padding: "24px 20px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-        <div className="font-display" style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.02em" }}>
-          <span style={{ color: "#F0F0F0" }}>Algo</span>
-          <span style={{ color: "#00FFD1" }}>Crefi</span>
+      {/* Top accent line */}
+      <div style={{ height: 2, background: "linear-gradient(90deg, #00FFD1, #7B2FFF, transparent)", flexShrink: 0 }} />
+
+      {/* Logo block */}
+      <div style={{ padding: "20px 20px 16px", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 0 }}>
+          <span className="font-display" style={{ fontSize: 18, fontWeight: 800, color: "#F0F0F0", letterSpacing: "-0.04em" }}>Algo</span>
+          <span className="font-display" style={{ fontSize: 18, fontWeight: 800, color: "#00FFD1", letterSpacing: "-0.04em" }}>Crefi</span>
         </div>
-        <div style={{ fontFamily: "monospace", fontSize: 9, color: "rgba(255,255,255,0.2)", letterSpacing: "0.1em", marginTop: 4 }}>
-          TESTNET · APP_758675636
+        <div style={{ fontFamily: "monospace", fontSize: 8, color: "rgba(0,255,209,0.3)", letterSpacing: "0.15em", marginTop: 3 }}>
+          ● TESTNET LIVE
         </div>
       </div>
 
-      {/* Wallet chip */}
-      <div style={{ padding: "16px 16px 0" }}>
+      {/* Wallet chip — untraditional: full-width, terminal style */}
+      <div style={{ padding: "0 14px 16px", flexShrink: 0 }}>
         <div
           style={{
-            background: "rgba(0,255,209,0.05)",
+            background: "rgba(0,255,209,0.04)",
             border: "1px solid rgba(0,255,209,0.1)",
-            borderRadius: 10,
+            borderRadius: 8,
             padding: "10px 12px",
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
           }}
         >
-          <span
-            style={{
-              width: 6,
-              height: 6,
-              borderRadius: "50%",
-              background: "#00FFD1",
-              boxShadow: "0 0 8px #00FFD1",
-              flexShrink: 0,
-              animation: "dot-pulse 2s ease infinite",
-            }}
-          />
-          <span style={{ fontFamily: "monospace", fontSize: 11, color: "rgba(255,255,255,0.55)", letterSpacing: "0.03em" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+            <span style={{ fontFamily: "monospace", fontSize: 8, color: "rgba(0,255,209,0.4)", letterSpacing: "0.12em" }}>CONNECTED</span>
+            <span
+              style={{
+                width: 5,
+                height: 5,
+                borderRadius: "50%",
+                background: "#00FFD1",
+                boxShadow: "0 0 6px #00FFD1",
+                animation: "dot-pulse 2s ease infinite",
+              }}
+            />
+          </div>
+          <div style={{ fontFamily: "monospace", fontSize: 11, color: "rgba(255,255,255,0.65)", letterSpacing: "0.04em" }}>
             ALGO3X...F9KT
-          </span>
+          </div>
         </div>
       </div>
 
-      {/* Nav */}
-      <nav style={{ marginTop: 24, padding: "0 10px", flex: 1 }}>
-        <div style={{ fontFamily: "monospace", fontSize: 9, color: "rgba(255,255,255,0.2)", letterSpacing: "0.12em", padding: "0 8px 10px" }}>
-          NAVIGATION
+      {/* Thin separator with label */}
+      <div style={{ padding: "0 14px 12px", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.04)" }} />
+          <span style={{ fontFamily: "monospace", fontSize: 8, color: "rgba(255,255,255,0.15)", letterSpacing: "0.12em" }}>NAV</span>
+          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.04)" }} />
         </div>
-        {NAV.map((item) => {
+      </div>
+
+      {/* Nav — untraditional: tag on left, label right */}
+      <nav style={{ padding: "0 10px", flex: 1 }}>
+        {NAV.map((item, idx) => {
           const isActive = active === item.id;
           const isHov = hovered === item.id;
           return (
@@ -140,74 +160,109 @@ export default function Sidebar({ active, onNav }: SidebarProps) {
                 display: "flex",
                 alignItems: "center",
                 gap: 10,
-                padding: "10px 12px",
-                borderRadius: 10,
-                marginBottom: 2,
-                background: isActive
-                  ? "rgba(0,255,209,0.07)"
-                  : isHov
-                  ? "rgba(255,255,255,0.04)"
-                  : "transparent",
+                padding: "9px 10px",
+                borderRadius: 8,
+                marginBottom: 1,
+                background: isActive ? "rgba(0,255,209,0.06)" : isHov ? "rgba(255,255,255,0.03)" : "transparent",
                 border: "none",
-                borderLeft: isActive ? "2px solid #00FFD1" : "2px solid transparent",
-                color: isActive ? "#00FFD1" : isHov ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.35)",
+                borderLeft: `2px solid ${isActive ? "#00FFD1" : "transparent"}`,
+                color: isActive ? "#00FFD1" : isHov ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.3)",
                 cursor: "pointer",
-                transition: "all 0.15s ease",
-                fontFamily: "Inter, sans-serif",
-                fontSize: 13,
-                fontWeight: isActive ? 500 : 400,
+                transition: "all 0.18s cubic-bezier(0.16,1,0.3,1)",
                 textAlign: "left",
+                opacity: mounted ? 1 : 0,
+                transform: mounted ? "translateX(0)" : "translateX(-8px)",
               }}
             >
+              {/* Step tag */}
+              <span
+                style={{
+                  fontFamily: "monospace",
+                  fontSize: 9,
+                  color: isActive ? "rgba(0,255,209,0.5)" : "rgba(255,255,255,0.15)",
+                  letterSpacing: "0.06em",
+                  width: 16,
+                  flexShrink: 0,
+                }}
+              >
+                {item.tag}
+              </span>
               {item.icon}
-              {item.label}
+              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, fontWeight: isActive ? 500 : 400, letterSpacing: "-0.01em" }}>
+                {item.label}
+              </span>
               {isActive && (
-                <span style={{ marginLeft: "auto", width: 4, height: 4, borderRadius: "50%", background: "#00FFD1" }} />
+                <span style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 4 }}>
+                  <span style={{ width: 3, height: 3, borderRadius: "50%", background: "#00FFD1" }} />
+                </span>
               )}
             </button>
           );
         })}
       </nav>
 
-      {/* Bottom: network status + disconnect */}
-      <div style={{ padding: "12px 16px 20px", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10, padding: "0 4px" }}>
-          <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#00FFD1" }} />
-          <span style={{ fontFamily: "monospace", fontSize: 9, color: "rgba(255,255,255,0.25)", letterSpacing: "0.1em" }}>
+      {/* Bottom — live stats */}
+      <div style={{ padding: "12px 14px 16px", borderTop: "1px solid rgba(255,255,255,0.04)", flexShrink: 0 }}>
+        {/* Live tx counter — the untraditional detail */}
+        <div
+          style={{
+            padding: "8px 10px",
+            background: "rgba(255,255,255,0.02)",
+            border: "1px solid rgba(255,255,255,0.05)",
+            borderRadius: 8,
+            marginBottom: 10,
+          }}
+        >
+          <div style={{ fontFamily: "monospace", fontSize: 8, color: "rgba(255,255,255,0.2)", letterSpacing: "0.12em", marginBottom: 3 }}>
+            SESSION_TXS
+          </div>
+          <div style={{ fontFamily: "monospace", fontSize: 14, color: "rgba(0,255,209,0.7)", fontWeight: 600, letterSpacing: "0.04em" }}>
+            {txCount.toLocaleString()}
+          </div>
+        </div>
+
+        {/* Algorand testnet */}
+        <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 10 }}>
+          <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#00FFD1", flexShrink: 0 }} />
+          <span style={{ fontFamily: "monospace", fontSize: 8, color: "rgba(255,255,255,0.2)", letterSpacing: "0.1em" }}>
             ALGORAND TESTNET
           </span>
         </div>
+
         <button
           style={{
             width: "100%",
-            background: "rgba(255,68,68,0.05)",
-            border: "1px solid rgba(255,68,68,0.12)",
-            borderRadius: 10,
-            padding: "10px 14px",
-            color: "rgba(255,68,68,0.6)",
-            fontFamily: "Inter, sans-serif",
-            fontSize: 13,
+            background: "transparent",
+            border: "1px solid rgba(255,68,68,0.1)",
+            borderRadius: 8,
+            padding: "8px 12px",
+            color: "rgba(255,68,68,0.45)",
+            fontFamily: "monospace",
+            fontSize: 10,
+            letterSpacing: "0.08em",
             cursor: "pointer",
-            transition: "all 0.2s ease",
+            transition: "all 0.18s ease",
             textAlign: "left",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(255,68,68,0.1)";
+            e.currentTarget.style.background = "rgba(255,68,68,0.07)";
             e.currentTarget.style.color = "#FF4444";
+            e.currentTarget.style.borderColor = "rgba(255,68,68,0.25)";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(255,68,68,0.05)";
-            e.currentTarget.style.color = "rgba(255,68,68,0.6)";
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "rgba(255,68,68,0.45)";
+            e.currentTarget.style.borderColor = "rgba(255,68,68,0.1)";
           }}
         >
-          Disconnect
+          DISCONNECT_WALLET
         </button>
       </div>
 
       <style>{`
         @keyframes dot-pulse {
           0%,100% { transform:scale(1); opacity:1; }
-          50%     { transform:scale(1.8); opacity:0.4; }
+          50%     { transform:scale(1.6); opacity:0.3; }
         }
       `}</style>
     </aside>

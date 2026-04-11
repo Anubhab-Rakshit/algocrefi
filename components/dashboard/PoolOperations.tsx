@@ -132,9 +132,14 @@ export default function PoolOperations({ pool }: Props) {
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-        <h2 className="font-display" style={{ fontSize: 17, fontWeight: 700, color: "#F0F0F0", letterSpacing: "-0.02em" }}>
-          Pool Operations
-        </h2>
+        <div>
+          <div style={{ fontFamily: "monospace", fontSize: 8, color: "rgba(0,255,209,0.35)", letterSpacing: "0.15em", marginBottom: 3 }}>
+            // POOL_OPS
+          </div>
+          <h2 className="font-display" style={{ fontSize: 17, fontWeight: 700, color: "#F0F0F0", letterSpacing: "-0.03em", margin: 0 }}>
+            Pool Operations
+          </h2>
+        </div>
         <div style={{ display: "flex", background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: 3 }}>
           {(["deposit", "withdraw"] as const).map((t) => (
             <button

@@ -32,9 +32,14 @@ export default function CreditStatus({ user, loan }: Props) {
         flexDirection: "column",
       }}
     >
-      <h2 className="font-display" style={{ fontSize: 17, fontWeight: 700, color: "#F0F0F0", letterSpacing: "-0.02em", marginBottom: 20 }}>
-        Credit Status
-      </h2>
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontFamily: "monospace", fontSize: 8, color: "rgba(255,183,71,0.4)", letterSpacing: "0.15em", marginBottom: 3 }}>
+          // CREDIT_STATUS
+        </div>
+        <h2 className="font-display" style={{ fontSize: 17, fontWeight: 700, color: "#F0F0F0", letterSpacing: "-0.03em", margin: 0 }}>
+          Credit Status
+        </h2>
+      </div>
 
       {/* AURA arc ring */}
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 20 }}>
