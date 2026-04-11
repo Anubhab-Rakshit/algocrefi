@@ -138,6 +138,66 @@ function Sparkline({ active }: { active: boolean }) {
   );
 }
 
+// Simulated transaction hash stream for Card A
+function TxStream() {
+  const [lines, setLines] = useState<string[]>([]);
+
+  useEffect(() => {
+    const chars = "0123456789abcdef";
+    const rand = (n: number) => Array.from({ length: n }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+    const actions = ["DEPOSIT", "WITHDRAW", "BORROW", "REPAY", "MINT_SHARE"];
+    const amounts = ["50", "120", "1000", "250", "88", "300"];
+
+    const initial = Array.from({ length: 6 }, () =>
+      `${rand(6)}  ${actions[Math.floor(Math.random() * actions.length)]}  ${amounts[Math.floor(Math.random() * amounts.length)]} ALGO`
+    );
+    setLines(initial);
+
+    const interval = setInterval(() => {
+      setLines((prev) => [
+        `${rand(6)}  ${actions[Math.floor(Math.random() * actions.length)]}  ${amounts[Math.floor(Math.random() * amounts.length)]} ALGO`,
+        ...prev.slice(0, 5),
+      ]);
+    }, 1400);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div
+      aria-label="Live transaction stream"
+      style={{
+        marginTop: "auto",
+        padding: "12px 14px",
+        background: "rgba(0,255,209,0.03)",
+        border: "1px solid rgba(0,255,209,0.08)",
+        borderRadius: 8,
+        fontFamily: "monospace",
+        overflow: "hidden",
+      }}
+    >
+      <div style={{ fontSize: 9, color: "rgba(0,255,209,0.4)", letterSpacing: "0.1em", marginBottom: 8 }}>
+        LIVE · POOL_TXNS
+      </div>
+      {lines.map((line, i) => (
+        <div
+          key={i}
+          style={{
+            fontSize: 11,
+            color: i === 0 ? "rgba(0,255,209,0.8)" : `rgba(255,255,255,${0.15 - i * 0.015})`,
+            padding: "2px 0",
+            transition: "color 0.4s ease",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {line}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function BentoGrid() {
   const { ref: sectionRef, visible } = useReveal(0.1);
 
@@ -153,13 +213,37 @@ export default function BentoGrid() {
       ref={sectionRef}
       style={{ position: "relative", zIndex: 1, padding: "120px 6vw", background: SECTION_BG }}
     >
-      {/* Section label */}
-      <div className="reveal" style={{ fontFamily: "Inter,sans-serif", fontSize: 11, color: "#00FFD1", letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 500, marginBottom: 12 }}>
-        WHAT ALGOCREFI DOES
+      {/* Debug-console section annotation */}
+      <div
+        className="reveal"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 16,
+          marginBottom: 64,
+          paddingBottom: 20,
+          borderBottom: "1px solid rgba(255,255,255,0.05)",
+        }}
+      >
+        <span style={{ fontFamily: "monospace", fontSize: 11, color: "rgba(0,255,209,0.4)", letterSpacing: "0.05em" }}>
+          // SECTION_02
+        </span>
+        <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.05)" }} />
+        <span style={{ fontFamily: "monospace", fontSize: 11, color: "rgba(255,255,255,0.2)", letterSpacing: "0.05em" }}>
+          protocol.features()
+        </span>
       </div>
-      <h2 className="font-display reveal" style={{ transitionDelay: "0.1s", fontSize: "clamp(38px,5.5vw,70px)", fontWeight: 800, color: "#F0F0F0", letterSpacing: "-0.035em", lineHeight: 1.05, maxWidth: 700, marginBottom: 40 }}>
-        A complete on-chain credit layer.
-      </h2>
+
+      {/* Two-column header split */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4vw", marginBottom: 40, alignItems: "end" }}>
+        <h2 className="font-display reveal" style={{ transitionDelay: "0.05s", fontSize: "clamp(38px,5.5vw,70px)", fontWeight: 800, color: "#F0F0F0", letterSpacing: "-0.035em", lineHeight: 1.0 }}>
+          A complete<br />
+          <span style={{ color: "rgba(255,255,255,0.2)", WebkitTextStroke: "1px rgba(255,255,255,0.25)" }}>credit layer.</span>
+        </h2>
+        <p className="reveal" style={{ transitionDelay: "0.12s", fontFamily: "Inter,sans-serif", fontSize: 14, color: "rgba(255,255,255,0.3)", lineHeight: 1.7, maxWidth: 320, alignSelf: "end", paddingBottom: 4 }}>
+          Four composable primitives. One protocol. Built on Algorand smart contracts.
+        </p>
+      </div>
 
       {/* Asymmetric bento grid */}
       <div style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr 1fr", gridTemplateRows: "280px 220px", gap: 14 }}>
@@ -167,23 +251,31 @@ export default function BentoGrid() {
         {/* Card A — Deposit & Earn (spans both rows) */}
         <div style={{ gridRow: "1 / 3", ...cardReveal(0) }}>
           <CardHover style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-            {/* Hex icon */}
-            <svg width="28" height="28" viewBox="0 0 28 28">
-              <polygon points="14,2 24,8 24,20 14,26 4,20 4,8" stroke="#00FFD1" strokeWidth="1.5" fill="none" />
-            </svg>
-            <div className="font-display" style={{ fontSize: 20, fontWeight: 700, color: "#F0F0F0", marginTop: 16, marginBottom: 8 }}>Deposit & Earn</div>
-            <p style={{ fontFamily: "Inter,sans-serif", fontSize: 14, color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>
+            {/* Header row */}
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 4 }}>
+              <svg width="28" height="28" viewBox="0 0 28 28" style={{ flexShrink: 0 }}>
+                <polygon points="14,2 24,8 24,20 14,26 4,20 4,8" stroke="#00FFD1" strokeWidth="1.5" fill="none" />
+              </svg>
+              <span style={{ fontFamily: "monospace", fontSize: 9, color: "rgba(0,255,209,0.35)", letterSpacing: "0.1em", paddingTop: 2 }}>
+                POOL_01
+              </span>
+            </div>
+            <div className="font-display" style={{ fontSize: 20, fontWeight: 700, color: "#F0F0F0", marginTop: 14, marginBottom: 8 }}>Deposit & Earn</div>
+            <p style={{ fontFamily: "Inter,sans-serif", fontSize: 13, color: "rgba(255,255,255,0.4)", lineHeight: 1.6 }}>
               Contribute ALGO to the shared pool. Receive proportional pool shares. Withdraw anytime.
             </p>
-            <div style={{ marginTop: "auto", borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 20 }}>
+            {/* Pool stats */}
+            <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 16, marginTop: 20 }}>
               {[["Pool Balance", "54,030 ALGO"], ["Share Price", "1.0031 ALGO"]].map(([label, value], i) => (
-                <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: i === 0 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
-                  <span style={{ fontFamily: "Inter,sans-serif", fontSize: 13, color: "rgba(255,255,255,0.4)" }}>{label}</span>
-                  <span style={{ fontFamily: "Inter,sans-serif", fontSize: 13, color: "#F0F0F0" }}>{value}</span>
+                <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: i === 0 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                  <span style={{ fontFamily: "Inter,sans-serif", fontSize: 12, color: "rgba(255,255,255,0.35)" }}>{label}</span>
+                  <span style={{ fontFamily: "Inter,sans-serif", fontSize: 12, fontWeight: 600, color: "#F0F0F0" }}>{value}</span>
                 </div>
               ))}
               <PoolBar active={visible} />
             </div>
+            {/* Live transaction stream — the differentiator */}
+            <TxStream />
           </CardHover>
         </div>
 

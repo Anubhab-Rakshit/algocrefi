@@ -109,6 +109,15 @@ body.loading { overflow: hidden; }
   transform: translateX(0);
 }
 
+@keyframes terminal-blink {
+  0%,100% { opacity: 1; }
+  50%     { opacity: 0; }
+}
+@keyframes slide-up-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ── Bento card shimmer on hover ── */
 .bento-card {
   position: relative;
