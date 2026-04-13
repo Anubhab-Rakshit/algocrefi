@@ -19,15 +19,20 @@ export async function buildOptInTx(walletAddress: string) {
 
 export async function buildDepositTxGroup(walletAddress: string, amountMicroAlgo: number) {
   const suggestedParams = await getSuggestedParams();
+  const depositMethod = algosdk.ABIMethod.fromSignature("deposit(uint64)uint64");
+  const paymentTxnIndex = 0;
+
   const paymentTx = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
     sender: walletAddress,
     receiver: APP_ACCOUNT,
     amount: amountMicroAlgo,
     suggestedParams,
   });
+
   const depositAppCallTx = algosdk.makeApplicationNoOpTxnFromObject({
     sender: walletAddress,
     appIndex: APP_ID,
+    appArgs: [depositMethod.getSelector(), algosdk.encodeUint64(paymentTxnIndex)],
     suggestedParams,
   });
 
@@ -36,10 +41,11 @@ export async function buildDepositTxGroup(walletAddress: string, amountMicroAlgo
 }
 
 export async function buildWithdrawTx(walletAddress: string, shares: number) {
+  const withdrawMethod = algosdk.ABIMethod.fromSignature("withdraw(uint64)uint64");
   return algosdk.makeApplicationNoOpTxnFromObject({
     sender: walletAddress,
     appIndex: APP_ID,
-    appArgs: [algosdk.encodeUint64(shares)],
+    appArgs: [withdrawMethod.getSelector(), algosdk.encodeUint64(shares)],
     suggestedParams: await getSuggestedParams(),
   });
 }
