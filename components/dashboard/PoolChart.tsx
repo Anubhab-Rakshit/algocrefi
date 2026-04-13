@@ -1,7 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { fetchMarketStats, fetchOHLC, type MarketStats, type OHLCCandle } from "@/src/utils/marketService";
+import {
+  fetchMarketStats,
+  fetchOHLC,
+  fetchPoolSnapshot,
+  type MarketStats,
+  type OHLCCandle,
+  type PoolSnapshot,
+} from "@/src/utils/marketService";
 
 const TIMEFRAMES = ["5m", "15m", "1h", "4h", "1d"] as const;
 type TF = (typeof TIMEFRAMES)[number];
@@ -18,17 +25,20 @@ export default function PoolChart({ pair = "ALGO_USDC" }: { pair?: string }) {
   const [timeframe, setTimeframe] = useState<TF>("1h");
   const [candles, setCandles] = useState<OHLCCandle[]>([]);
   const [stats, setStats] = useState<MarketStats | null>(null);
+  const [snapshot, setSnapshot] = useState<PoolSnapshot | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const loadMarket = useCallback(async (tf: TF) => {
     setError(null);
-    const [ohlc, marketStats] = await Promise.all([
+    const [ohlc, marketStats, poolSnapshot] = await Promise.all([
       fetchOHLC(tf, pair),
       fetchMarketStats(pair),
+      fetchPoolSnapshot(),
     ]);
     setCandles(ohlc);
     setStats(marketStats);
+    setSnapshot(poolSnapshot);
     setLoading(false);
   }, [pair]);
 
@@ -147,11 +157,16 @@ export default function PoolChart({ pair = "ALGO_USDC" }: { pair?: string }) {
           <div style={{ fontFamily: "Inter,sans-serif", fontSize: 12, color: "rgba(255,255,255,0.4)" }}>{pair.replace("_", " / ")}</div>
           <div style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 4 }}>
             <span className="font-display" style={{ fontSize: 30, color: "#F0F0F0" }}>
-              {loading ? "--" : currentPrice?.toFixed(4) ?? "--"}
+              {loading ? "--" : (snapshot?.usdcPerAlgo ?? currentPrice)?.toFixed(4) ?? "--"}
             </span>
             <span style={{ fontFamily: "Inter,sans-serif", fontSize: 12, color: changeColor }}>
               {stats ? `${stats.change24h >= 0 ? "+" : ""}${stats.change24h.toFixed(2)}%` : "--"}
             </span>
+          </div>
+          <div style={{ marginTop: 4, fontFamily: "Inter,sans-serif", fontSize: 12, color: "rgba(255,255,255,0.45)" }}>
+            {snapshot
+              ? `Tinyman Pool: ${snapshot.algoReserve.toFixed(2)} ALGO / ${snapshot.quoteReserve.toFixed(2)} ${snapshot.quoteSymbol}`
+              : "Tinyman pool snapshot unavailable"}
           </div>
         </div>
         <div style={{ display: "flex", gap: 18, textAlign: "right" }}>

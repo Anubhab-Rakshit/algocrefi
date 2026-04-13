@@ -1,4 +1,4 @@
-const { getMarketStats, getOhlc } = require("../services/marketDataService");
+const { getMarketStats, getOhlc, getTinymanPoolSnapshot } = require("../services/marketDataService");
 
 function parseUnix(value, fallback) {
   const n = Number(value);
@@ -30,5 +30,14 @@ exports.getStats = async (_req, res) => {
     return res.json(stats);
   } catch (err) {
     return res.status(500).json({ error: err.message || "Failed to fetch market stats" });
+  }
+};
+
+exports.getPoolSnapshot = async (_req, res) => {
+  try {
+    const snapshot = await getTinymanPoolSnapshot();
+    return res.json(snapshot);
+  } catch (err) {
+    return res.status(500).json({ error: err.message || "Failed to fetch pool snapshot" });
   }
 };

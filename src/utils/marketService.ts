@@ -18,6 +18,16 @@ export type MarketStats = {
   low24h: number;
 };
 
+export type PoolSnapshot = {
+  poolAddress: string;
+  algoReserve: number;
+  quoteReserve: number;
+  quoteAssetId: number;
+  quoteSymbol: string;
+  usdcPerAlgo: number;
+  round: number;
+};
+
 const INTERVAL_SECONDS: Record<string, number> = {
   "5m": 300,
   "15m": 900,
@@ -67,6 +77,18 @@ export async function fetchMarketStats(pair = "ALGO_USDC"): Promise<MarketStats>
 
   if (typeof response?.price !== "number") {
     throw new Error("Market stats unavailable");
+  }
+
+  return response;
+}
+
+export async function fetchPoolSnapshot(): Promise<PoolSnapshot> {
+  const response = await apiRequest<PoolSnapshot>("/api/market/pool-snapshot", {
+    auth: false,
+  });
+
+  if (typeof response?.usdcPerAlgo !== "number") {
+    throw new Error("Pool snapshot unavailable");
   }
 
   return response;

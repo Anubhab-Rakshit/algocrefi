@@ -1,4 +1,5 @@
 const COINGECKO_BASE = "https://api.coingecko.com/api/v3";
+const algosdk = require("algosdk");
 
 const INTERVAL_SECONDS = {
   "5m": 300,
@@ -110,7 +111,52 @@ async function getMarketStats() {
   };
 }
 
+function formatUnits(raw, decimals) {
+  const value = BigInt(raw || 0);
+  if (decimals <= 0) return value.toString();
+  const sign = value < 0n ? "-" : "";
+  const base = sign ? (-value).toString() : value.toString();
+  const padded = base.padStart(decimals + 1, "0");
+  const whole = padded.slice(0, -decimals);
+  const frac = padded.slice(-decimals).replace(/0+$/, "");
+  return frac ? `${sign}${whole}.${frac}` : `${sign}${whole}`;
+}
+
+async function getTinymanPoolSnapshot() {
+  const poolAddress =
+    process.env.TINYMAN_POOL_ADDRESS ||
+    "JOEPFUDG7NS4EEUM7WZW7GA6VLD3STS5DDCJWKSGB2QLHIWDF2CJMXEFTM";
+  const quoteAssetId = Number(process.env.USDC_ASA_ID || process.env.TINYMAN_QUOTE_ASA_ID || 10458941);
+  const quoteDecimals = Number(process.env.USDC_DECIMALS || process.env.TINYMAN_QUOTE_DECIMALS || 6);
+  const algod = new algosdk.Algodv2(
+    process.env.ALGOD_TOKEN || "",
+    process.env.ALGOD_SERVER || "https://testnet-api.algonode.cloud",
+    process.env.ALGOD_PORT || ""
+  );
+
+  const account = await algod.accountInformation(poolAddress).do();
+  const algoRaw = BigInt(account.amount || 0);
+  const holdings = Array.isArray(account.assets) ? account.assets : [];
+  const quoteHolding = holdings.find((item) => Number(item.assetId || 0) === quoteAssetId);
+  const quoteRaw = BigInt(quoteHolding?.amount || 0);
+
+  const algo = Number(formatUnits(algoRaw, 6));
+  const quote = Number(formatUnits(quoteRaw, quoteDecimals));
+  const usdcPerAlgo = algo > 0 ? quote / algo : 0;
+
+  return {
+    poolAddress,
+    algoReserve: algo,
+    quoteReserve: quote,
+    quoteAssetId,
+    quoteSymbol: quoteAssetId === 10458941 ? "USDC" : `ASA-${quoteAssetId}`,
+    usdcPerAlgo,
+    round: Number(account.round || 0),
+  };
+}
+
 module.exports = {
   getOhlc,
   getMarketStats,
+  getTinymanPoolSnapshot,
 };
