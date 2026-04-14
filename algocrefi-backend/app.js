@@ -1,4 +1,4 @@
-﻿const express = require("express");
+const express = require("express");
 const cors = require("cors");
 
 const poolRoutes = require("./src/routes/poolRoutes");
@@ -9,7 +9,14 @@ const marketRoutes = require("./src/routes/marketRoutes");
 
 const app = express();
 
-app.use(cors());
+const allowedOrigin = process.env.FRONTEND_URL || "*";
+
+app.use(cors({
+  origin: allowedOrigin,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 app.use(express.json());
 
 app.get('/test', (req, res) => {
