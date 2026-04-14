@@ -4,8 +4,8 @@ import type { PoolInfo, UserInfo } from "@/lib/mockData";
 import { useToast } from "./toastContext";
 import { Buffer } from "buffer";
 import { getWalletAddress } from "@/src/utils/authService";
-import { buildDepositTxGroup, buildWithdrawTx } from "@/src/utils/algoTxBuilder";
-import { algoToMicroAlgo, estimateAlgoFromShares, estimateShares, submitDeposit, submitWithdraw } from "@/src/utils/poolService";
+import { buildDepositTxGroup, buildOptInTx, buildWithdrawTx } from "@/src/utils/algoTxBuilder";
+import { algoToMicroAlgo, estimateAlgoFromShares, estimateShares, submitDeposit, submitOptIn, submitWithdraw } from "@/src/utils/poolService";
 import { getStoredWalletType, signTransactions } from "@/src/utils/walletService";
 
 interface Props {
@@ -150,6 +150,33 @@ export default function PoolOperations({ pool, user, onRefresh }: Props) {
 
     try {
       const { walletAddress, walletType } = getWalletSession();
+
+      if (user.shares === 0) {
+        setLoading(true);
+        setLoadingLabel("Signing opt-in...");
+        try {
+          const optInTx = await buildOptInTx(walletAddress);
+          const [signedOptIn] = await signTransactions([optInTx], walletType);
+          const optInBase64 = encodeSignedTx(signedOptIn);
+
+          setLoadingLabel("Submitting opt-in...");
+          await submitOptIn(optInBase64);
+          addToast({ type: "success", title: "Opt-in confirmed", message: "Wallet opted into pool app" });
+        } catch (optInError: unknown) {
+          const optInMsg = optInError instanceof Error ? optInError.message : "Opt-in failed";
+          const normalized = optInMsg.toLowerCase();
+          const alreadyOpted =
+            normalized.includes("already") ||
+            normalized.includes("already in ledger") ||
+            normalized.includes("has opted in") ||
+            normalized.includes("has already opted in");
+
+          if (!alreadyOpted) {
+            throw optInError;
+          }
+        }
+      }
+
       setLoading(true);
       setLoadingLabel("Building tx...");
 

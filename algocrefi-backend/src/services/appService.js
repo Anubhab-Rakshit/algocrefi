@@ -240,51 +240,19 @@ async function checkAccountOptedIn(address, appId) {
 }
 
 async function getPoolInfo() {
-  const account = getAccount();
   const appId = getAppId();
-
-  const suggestedParams = await algodClient.getTransactionParams().do();
-  const method = algosdk.ABIMethod.fromSignature("get_pool()uint64");
-
-  const atc = new algosdk.AtomicTransactionComposer();
-
-  atc.addMethodCall({
-    appID: appId,
-    method: method,
-    methodArgs: [],
-    sender: account.addr.toString(),
-    signer: algosdk.makeBasicAccountTransactionSigner(account),
-    suggestedParams: suggestedParams,
-    staticCall: true,
-  });
-
-  const result = await atc.execute(algodClient, 10);
-
-  return Number(result.methodResults[0].returnValue);
+  const app = await algodClient.getApplicationByID(Number(appId)).do();
+  const state = app?.params?.["global-state"] || app?.params?.globalState || [];
+  const entry = state.find((item) => Buffer.from(item.key, "base64").toString() === "pool");
+  return Number(entry?.value?.uint || 0);
 }
 
 async function getTotalShares() {
-  const account = getAccount();
   const appId = getAppId();
-
-  const suggestedParams = await algodClient.getTransactionParams().do();
-  const method = algosdk.ABIMethod.fromSignature("get_total_shares()uint64");
-
-  const atc = new algosdk.AtomicTransactionComposer();
-
-  atc.addMethodCall({
-    appID: appId,
-    method: method,
-    methodArgs: [],
-    sender: account.addr.toString(),
-    signer: algosdk.makeBasicAccountTransactionSigner(account),
-    suggestedParams: suggestedParams,
-    staticCall: true,
-  });
-
-  const result = await atc.execute(algodClient, 10);
-
-  return Number(result.methodResults[0].returnValue);
+  const app = await algodClient.getApplicationByID(Number(appId)).do();
+  const state = app?.params?.["global-state"] || app?.params?.globalState || [];
+  const entry = state.find((item) => Buffer.from(item.key, "base64").toString() === "total_shares");
+  return Number(entry?.value?.uint || 0);
 }
 
 async function getUserShares(address) {

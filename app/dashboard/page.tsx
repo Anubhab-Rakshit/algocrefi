@@ -6,6 +6,7 @@ import Sidebar from "@/components/dashboard/Sidebar";
 import TopBar from "@/components/dashboard/TopBar";
 import StatCards from "@/components/dashboard/StatCards";
 import PoolChart from "@/components/dashboard/PoolChart";
+import PoolValueChart from "@/components/dashboard/PoolValueChart";
 import PoolOperations from "@/components/dashboard/PoolOperations";
 import CreditStatus from "@/components/dashboard/CreditStatus";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -229,7 +230,7 @@ function DashboardInner() {
               flexDirection: "column",
             }}
           >
-            <PoolChart pair="ALGO_USDC" />
+            <PoolValueChart poolBalanceMicro={pool.balance} />
           </div>
         </>
       );
@@ -327,8 +328,8 @@ function DashboardInner() {
             <div style={{ color: "rgba(255,255,255,0.5)", lineHeight: 1.7, fontSize: 13 }}>
               Settings are currently runtime-driven from authenticated session and backend availability. Wallet disconnect and session revoke are available from sidebar.
             </div>
-            <div style={{ marginTop: 18, background: "rgba(255,68,68,0.06)", border: "1px solid rgba(255,68,68,0.18)", borderRadius: 10, padding: "10px 12px", color: "#FF8B8B", fontSize: 12 }}>
-              Market module requires backend `market` routes. If unavailable, chart cards will show explicit errors.
+            <div style={{ marginTop: 18, background: "rgba(0,255,209,0.06)", border: "1px solid rgba(0,255,209,0.2)", borderRadius: 10, padding: "10px 12px", color: "#88FFE8", fontSize: 12 }}>
+              Market and pool modules are live. Dashboard charts now use backend market routes and pool snapshot data.
             </div>
           </div>
         </div>

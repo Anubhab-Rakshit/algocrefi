@@ -210,15 +210,37 @@ async function readGlobalStateUint(appId, key) {
   return Number(hit?.value?.uint || 0);
 }
 
+const priceCache = { price: 0.1, ts: 0 };
+const PRICE_CACHE_TTL_MS = 5 * 60 * 1000;
+
 async function fetchAlgoUsdPrice() {
-  const response = await fetch(
-    "https://api.coingecko.com/api/v3/simple/price?ids=algorand&vs_currencies=usd"
-  );
-  if (!response.ok) throw new Error("Failed to fetch ALGO price");
-  const json = await response.json();
-  const price = Number(json?.algorand?.usd || 0);
-  if (!price) throw new Error("Invalid ALGO price response");
-  return price;
+  const now = Date.now();
+  if (priceCache.price > 0 && now - priceCache.ts < PRICE_CACHE_TTL_MS) {
+    return priceCache.price;
+  }
+
+  const poolAddress = "JOEPFUDG7NS4EEUM7WZW7GA6VLD3STS5DDCJWKSGB2QLHIWDF2CJMXEFTM";
+  const usdcAssetId = 10458941;
+
+  try {
+    const account = await algodClient.accountInformation(poolAddress).do();
+    const algoRaw = BigInt(account.amount || 0);
+    const algoBalance = Number(algoRaw) / 1_000_000;
+    const assets = Array.isArray(account.assets) ? account.assets : [];
+    const usdcHolding = assets.find((a) => Number(a.assetId || 0) === usdcAssetId);
+    const usdcBalance = Number(usdcHolding?.amount || 0) / 1_000_000;
+
+    if (algoBalance <= 0) throw new Error("Pool has no ALGO");
+    const price = usdcBalance / algoBalance;
+    if (!price || !Number.isFinite(price)) throw new Error("Invalid Tinyman price");
+
+    priceCache.price = price;
+    priceCache.ts = now;
+    return price;
+  } catch (_err) {
+    if (priceCache.price > 0) return priceCache.price;
+    throw _err;
+  }
 }
 
 function calculateDue(algoAmountMicro, daysToRepay, dailyInterestBps = 10) {

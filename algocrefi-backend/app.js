@@ -17,17 +17,12 @@ app.get('/test', (req, res) => {
 });
 
 function safeStringify(obj) {
-  console.log('safeStringify called');
+  if (typeof obj === 'bigint') return obj.toString();
+  if (Array.isArray(obj)) return obj.map((item) => safeStringify(item));
   if (obj && typeof obj === 'object') {
     const result = {};
     for (const [key, value] of Object.entries(obj)) {
-      if (typeof value === 'bigint') {
-        result[key] = value.toString();
-      } else if (value && typeof value === 'object') {
-        result[key] = safeStringify(value);
-      } else {
-        result[key] = value;
-      }
+      result[key] = safeStringify(value);
     }
     return result;
   }
@@ -37,7 +32,6 @@ function safeStringify(obj) {
 app.use((req, res, next) => {
   const originalJson = res.json.bind(res);
   res.json = function(body) {
-    console.log('res.json called');
     try {
       const serialized = safeStringify(body);
       return originalJson.call(this, serialized);
